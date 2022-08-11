@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id          String   @id @default(uuid())
+  nome        String
+  email       String   @unique
+  senha       String
+  endereco    String
+  cep         String
+  numero_casa String
+  telefone    String
+  coleta Coleta[]
+
+  @@map("usuario")
+}
+
+model Coleta {
+  id               String  @id @default(uuid())
+  nome             String
+  ponto_referencia String
+  detalhes         String
+  usuario_id       String
+  relation         Usuario? @relation(fields: [usuario_id], references:[id])
+  @@map("coleta")
+}
