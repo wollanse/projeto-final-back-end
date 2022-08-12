@@ -1,13 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ColetaDTO } from './Coleta.dto';
 import { ColetaService } from './coleta.service';
+import { ColetaRequest } from './ColetaRequest.dto';
 
 @Controller('coleta')
 export class ColetaController {
   constructor(private readonly coletaService: ColetaService) {}
 
   @Post()
-  async save(@Body() data:ColetaDTO){
+  @UsePipes(ValidationPipe)
+  async save(@Body() data:ColetaRequest){
     return this.coletaService.create(data)
   }
 

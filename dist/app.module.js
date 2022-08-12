@@ -10,11 +10,12 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const usuario_module_1 = require("./module/usuario/usuario.module");
 const coleta_module_1 = require("./module/coleta/coleta.module");
+const login_module_1 = require("./module/login/login.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [usuario_module_1.UsuarioModule, coleta_module_1.ColetaModule],
+        imports: [usuario_module_1.UsuarioModule, coleta_module_1.ColetaModule, login_module_1.LoginModule],
         controllers: [],
         providers: [],
     })

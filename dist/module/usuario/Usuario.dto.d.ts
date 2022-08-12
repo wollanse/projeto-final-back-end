@@ -1,4 +1,4 @@
-export declare type UsuarioDTO = {
+export declare class UsuarioDTO {
     id?: string;
     nome: string;
     email: string;
@@ -7,4 +7,4 @@ export declare type UsuarioDTO = {
     cep: string;
     numero_casa: string;
     telefone: string;
-};
+}

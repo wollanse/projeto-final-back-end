@@ -1,12 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/PrismaService';
-import { UsuarioDTO } from './Usuario.dto';
+import {CreateUsuarioDTO} from "./UsuarioRequest.dto"
+import { UpdateUsuarioDTO } from './UsuarioRequestUpdate.dto';
+import {CodeDecode} from "../../helpers/codeDecoderpassword"
 
 @Injectable()
 export class UsuarioService {
     constructor(private prisma: PrismaService){}
 
-    async create(data: UsuarioDTO){
+    async create(data: CreateUsuarioDTO){
+        const codedecode = new CodeDecode()
         const userExists = await this.prisma.usuario.findFirst({
             where: {
                 email: data.email
@@ -16,9 +19,18 @@ export class UsuarioService {
         if(userExists){
             throw new HttpException("Esse email já se encontra cadastrado!", HttpStatus.CONFLICT)
         }
-
+        const hashPassword = await codedecode.encode(data.senha)
+        
         return await this.prisma.usuario.create({
-            data: data
+            data: {
+                cep: data.cep,
+                email: data.email,
+                endereco: data.endereco,
+                nome: data.nome,
+                numero_casa: data.numero_casa,
+                senha: hashPassword,
+                telefone: data.telefone,
+            }
         })
     }
 
@@ -37,16 +49,17 @@ export class UsuarioService {
     
     }
 
-    async update(id: string, data: UsuarioDTO){
-        const usuario = await this.prisma.usuario.findUnique({
+    async update(id: string, data: UpdateUsuarioDTO){
+        const usuarioTarget = await this.prisma.usuario.findUnique({
             where: {
                 id: id
             }
         })
 
-        if(!usuario){
+        if(!usuarioTarget){
             throw new HttpException("Usuario não encontrado na nossa base de dados", HttpStatus.NOT_FOUND)
         }
+
 
         return await this.prisma.usuario.update({
             data,

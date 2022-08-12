@@ -14,7 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColetaController = void 0;
 const common_1 = require("@nestjs/common");
+const Coleta_dto_1 = require("./Coleta.dto");
 const coleta_service_1 = require("./coleta.service");
+const ColetaRequest_dto_1 = require("./ColetaRequest.dto");
 let ColetaController = class ColetaController {
     constructor(coletaService) {
         this.coletaService = coletaService;
@@ -34,9 +36,10 @@ let ColetaController = class ColetaController {
 };
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [ColetaRequest_dto_1.ColetaRequest]),
     __metadata("design:returntype", Promise)
 ], ColetaController.prototype, "save", null);
 __decorate([
@@ -51,7 +54,7 @@ __decorate([
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Coleta_dto_1.ColetaDTO]),
     __metadata("design:returntype", Promise)
 ], ColetaController.prototype, "update", null);
 __decorate([

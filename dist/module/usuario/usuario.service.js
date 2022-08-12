@@ -12,11 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioService = void 0;
 const common_1 = require("@nestjs/common");
 const PrismaService_1 = require("../../database/PrismaService");
+const codeDecoderpassword_1 = require("../../helpers/codeDecoderpassword");
 let UsuarioService = class UsuarioService {
     constructor(prisma) {
         this.prisma = prisma;
     }
     async create(data) {
+        const codedecode = new codeDecoderpassword_1.CodeDecode();
         const userExists = await this.prisma.usuario.findFirst({
             where: {
                 email: data.email
@@ -25,8 +27,17 @@ let UsuarioService = class UsuarioService {
         if (userExists) {
             throw new common_1.HttpException("Esse email já se encontra cadastrado!", common_1.HttpStatus.CONFLICT);
         }
+        const hashPassword = await codedecode.encode(data.senha);
         return await this.prisma.usuario.create({
-            data: data
+            data: {
+                cep: data.cep,
+                email: data.email,
+                endereco: data.endereco,
+                nome: data.nome,
+                numero_casa: data.numero_casa,
+                senha: hashPassword,
+                telefone: data.telefone,
+            }
         });
     }
     async findById(id) {
@@ -41,12 +52,12 @@ let UsuarioService = class UsuarioService {
         return usuario;
     }
     async update(id, data) {
-        const usuario = await this.prisma.usuario.findUnique({
+        const usuarioTarget = await this.prisma.usuario.findUnique({
             where: {
                 id: id
             }
         });
-        if (!usuario) {
+        if (!usuarioTarget) {
             throw new common_1.HttpException("Usuario não encontrado na nossa base de dados", common_1.HttpStatus.NOT_FOUND);
         }
         return await this.prisma.usuario.update({

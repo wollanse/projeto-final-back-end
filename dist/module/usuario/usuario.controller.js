@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioController = void 0;
 const common_1 = require("@nestjs/common");
 const usuario_service_1 = require("./usuario.service");
+const UsuarioRequest_dto_1 = require("./UsuarioRequest.dto");
+const UsuarioRequestUpdate_dto_1 = require("./UsuarioRequestUpdate.dto");
 let UsuarioController = class UsuarioController {
     constructor(usuarioService) {
         this.usuarioService = usuarioService;
@@ -35,9 +37,10 @@ let UsuarioController = class UsuarioController {
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(201),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [UsuarioRequest_dto_1.CreateUsuarioDTO]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "create", null);
 __decorate([
@@ -49,10 +52,11 @@ __decorate([
 ], UsuarioController.prototype, "findById", null);
 __decorate([
     (0, common_1.Put)(":id"),
+    (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, UsuarioRequestUpdate_dto_1.UpdateUsuarioDTO]),
     __metadata("design:returntype", Promise)
 ], UsuarioController.prototype, "update", null);
 __decorate([

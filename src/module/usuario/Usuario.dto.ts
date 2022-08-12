@@ -1,4 +1,4 @@
-export type UsuarioDTO = {
+export class UsuarioDTO {
     id?: string
     nome: string
     email: string
