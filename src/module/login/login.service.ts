@@ -16,11 +16,14 @@ export class LoginService {
         email: data.email,
       }
     })
-
+      if(!user){
+        return ("Usuario Não encontrado.")
+      }
     const compare = await codeDecode.decode(data.senha, user.senha)
 
     if(compare){
       return user
     }
+    return ("Senha incorreta.")
   }
 }
