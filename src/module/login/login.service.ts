@@ -1,29 +1,46 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { use } from 'passport';
+import { HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/database/PrismaService';
-import { CodeDecode } from 'src/helpers/codeDecoderpassword';
-import { LoginDto } from './dto/login.dto';
+import { UsuarioDTO } from '../usuario/Usuario.dto';
+import { compareSync } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+
 
 @Injectable()
 export class LoginService {
-  constructor(private prisma: PrismaService){}
-  
-  async login(data: LoginDto){
-  const codeDecode = new CodeDecode()
+  constructor(private prisma: PrismaService, private jwtService: JwtService){}
 
-    const user = await this.prisma.usuario.findFirst({
-      where: {
-        email: data.email,
-      }
-    })
-      if(!user){
-        return ("Usuario Não encontrado.")
-      }
-    const compare = await codeDecode.decode(data.senha, user.senha)
-
-    if(compare){
-      return user
+  async validateUser(email: string, pass: string){
+    let user: UsuarioDTO;
+    try{
+        user = await this.prisma.usuario.findUnique({
+            where: {
+                email: email
+            }
+        })
+    } catch (err){
+       throw new NotFoundException("Email e senha invalido")
     }
-    return ("Senha incorreta.")
-  }
+
+    const passValid = await compareSync(pass, user.senha)
+    if(!passValid) return null;
+
+    return user;
 }
+  
+async login(email: string) {
+  const usuario = await this.prisma.usuario.findUnique({
+    where: {
+      email: email
+    }
+  })
+
+  if(!usuario) throw new HttpException("Not found", HttpStatus.NOT_FOUND)
+
+  const payload = { sub: usuario.id, email: usuario.email };
+
+  return {
+    token: this.jwtService.sign(payload),
+  };
+}
+}
+

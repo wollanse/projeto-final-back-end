@@ -1,12 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../database/PrismaService';
 import {CreateUsuarioDTO} from "./UsuarioRequest.dto"
 import { UpdateUsuarioDTO } from './UsuarioRequestUpdate.dto';
 import {CodeDecode} from "../../helpers/codeDecoderpassword"
+import { UsuarioDTO } from './Usuario.dto';
+import { compareSync } from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
-    constructor(private prisma: PrismaService){}
+    constructor(
+        private prisma: PrismaService){}
 
     async create(data: CreateUsuarioDTO){
         const codedecode = new CodeDecode()
@@ -33,7 +36,20 @@ export class UsuarioService {
             }
         })
     }
+    async findByEmail(email: string){
+        const usuario =  await this.prisma.usuario.findUnique({
+            where: {
+                id: email
+            }
+        })
 
+        if(!usuario){
+            throw new HttpException("Not found", HttpStatus.NOT_FOUND)
+        }
+
+        return usuario;
+    
+    }
     async findById(id: string){
         const usuario =  await this.prisma.usuario.findFirst({
             where: {
@@ -78,8 +94,8 @@ export class UsuarioService {
             }).catch(err => {
                 throw new HttpException("Opss!... algo deu errado", HttpStatus.BAD_REQUEST)
             })
-        } catch(e){
-            
+        } catch(err){
+            console.log(err.data.message)
         }
     }
 }

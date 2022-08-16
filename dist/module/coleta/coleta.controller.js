@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ColetaController = void 0;
 const common_1 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
 const Coleta_dto_1 = require("./Coleta.dto");
 const coleta_service_1 = require("./coleta.service");
 const ColetaRequest_dto_1 = require("./ColetaRequest.dto");
@@ -66,6 +67,7 @@ __decorate([
 ], ColetaController.prototype, "delete", null);
 ColetaController = __decorate([
     (0, common_1.Controller)('coleta'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)("local")),
     __metadata("design:paramtypes", [coleta_service_1.ColetaService])
 ], ColetaController);
 exports.ColetaController = ColetaController;

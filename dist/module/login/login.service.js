@@ -12,27 +12,47 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginService = void 0;
 const common_1 = require("@nestjs/common");
 const PrismaService_1 = require("../../database/PrismaService");
-const codeDecoderpassword_1 = require("../../helpers/codeDecoderpassword");
+const bcrypt_1 = require("bcrypt");
+const jwt_1 = require("@nestjs/jwt");
 let LoginService = class LoginService {
-    constructor(prisma) {
+    constructor(prisma, jwtService) {
         this.prisma = prisma;
+        this.jwtService = jwtService;
     }
-    async login(data) {
-        const codeDecode = new codeDecoderpassword_1.CodeDecode();
-        const user = await this.prisma.usuario.findFirst({
+    async validateUser(email, pass) {
+        let user;
+        try {
+            user = await this.prisma.usuario.findUnique({
+                where: {
+                    email: email
+                }
+            });
+        }
+        catch (err) {
+            throw new common_1.NotFoundException("Email e senha invalido");
+        }
+        const passValid = await (0, bcrypt_1.compareSync)(pass, user.senha);
+        if (!passValid)
+            return null;
+        return user;
+    }
+    async login(email) {
+        const usuario = await this.prisma.usuario.findUnique({
             where: {
-                email: data.email,
+                email: email
             }
         });
-        const compare = await codeDecode.decode(data.senha, user.senha);
-        if (compare) {
-            return user;
-        }
+        if (!usuario)
+            throw new common_1.HttpException("Not found", common_1.HttpStatus.NOT_FOUND);
+        const payload = { sub: usuario.id, email: usuario.email };
+        return {
+            token: this.jwtService.sign(payload),
+        };
     }
 };
 LoginService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [PrismaService_1.PrismaService])
+    __metadata("design:paramtypes", [PrismaService_1.PrismaService, jwt_1.JwtService])
 ], LoginService);
 exports.LoginService = LoginService;
 //# sourceMappingURL=login.service.js.map

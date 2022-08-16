@@ -11,12 +11,25 @@ const common_1 = require("@nestjs/common");
 const login_service_1 = require("./login.service");
 const login_controller_1 = require("./login.controller");
 const PrismaService_1 = require("../../database/PrismaService");
+const usuario_module_1 = require("../usuario/usuario.module");
+const passport_1 = require("@nestjs/passport");
+const jwt_1 = require("@nestjs/jwt");
+const local_strategy_1 = require("./strategies/local.strategy");
+const jwt_strategy_1 = require("./strategies/jwt.strategy");
 let LoginModule = class LoginModule {
 };
 LoginModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            usuario_module_1.UsuarioModule,
+            passport_1.PassportModule,
+            jwt_1.JwtModule.register({
+                privateKey: process.env.SECRET,
+                signOptions: { expiresIn: "240s" }
+            })
+        ],
         controllers: [login_controller_1.LoginController],
-        providers: [login_service_1.LoginService, PrismaService_1.PrismaService]
+        providers: [login_service_1.LoginService, PrismaService_1.PrismaService, local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy],
     })
 ], LoginModule);
 exports.LoginModule = LoginModule;

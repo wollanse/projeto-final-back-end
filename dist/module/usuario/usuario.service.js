@@ -40,6 +40,17 @@ let UsuarioService = class UsuarioService {
             }
         });
     }
+    async findByEmail(email) {
+        const usuario = await this.prisma.usuario.findUnique({
+            where: {
+                id: email
+            }
+        });
+        if (!usuario) {
+            throw new common_1.HttpException("Not found", common_1.HttpStatus.NOT_FOUND);
+        }
+        return usuario;
+    }
     async findById(id) {
         const usuario = await this.prisma.usuario.findFirst({
             where: {
@@ -77,7 +88,8 @@ let UsuarioService = class UsuarioService {
                 throw new common_1.HttpException("Opss!... algo deu errado", common_1.HttpStatus.BAD_REQUEST);
             });
         }
-        catch (e) {
+        catch (err) {
+            console.log(err.data.message);
         }
     }
 };

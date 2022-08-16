@@ -11,7 +11,11 @@ const common_1 = require("@nestjs/common");
 const usuario_module_1 = require("./module/usuario/usuario.module");
 const coleta_module_1 = require("./module/coleta/coleta.module");
 const login_module_1 = require("./module/login/login.module");
+const VerifyToken_1 = require("./middlewares/VerifyToken");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer.apply(VerifyToken_1.VerifyToken).forRoutes('/coleta');
+    }
 };
 AppModule = __decorate([
     (0, common_1.Module)({

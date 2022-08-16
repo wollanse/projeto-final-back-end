@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ColetaDTO } from './Coleta.dto';
 import { ColetaService } from './coleta.service';
 import { ColetaRequest } from './ColetaRequest.dto';
 
 @Controller('coleta')
+@UseGuards(AuthGuard("local"))
 export class ColetaController {
   constructor(private readonly coletaService: ColetaService) {}
 

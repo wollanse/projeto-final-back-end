@@ -11,12 +11,15 @@ const common_1 = require("@nestjs/common");
 const coleta_service_1 = require("./coleta.service");
 const coleta_controller_1 = require("./coleta.controller");
 const PrismaService_1 = require("../../database/PrismaService");
+const local_strategy_1 = require("../login/strategies/local.strategy");
+const login_service_1 = require("../login/login.service");
+const jwt_1 = require("@nestjs/jwt");
 let ColetaModule = class ColetaModule {
 };
 ColetaModule = __decorate([
     (0, common_1.Module)({
         controllers: [coleta_controller_1.ColetaController],
-        providers: [coleta_service_1.ColetaService, PrismaService_1.PrismaService]
+        providers: [coleta_service_1.ColetaService, PrismaService_1.PrismaService, local_strategy_1.LocalStrategy, login_service_1.LoginService, jwt_1.JwtModule, jwt_1.JwtService]
     })
 ], ColetaModule);
 exports.ColetaModule = ColetaModule;

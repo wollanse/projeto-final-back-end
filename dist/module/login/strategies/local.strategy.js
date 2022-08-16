@@ -8,33 +8,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginController = void 0;
+exports.LocalStrategy = void 0;
 const common_1 = require("@nestjs/common");
-const login_dto_1 = require("./dto/login.dto");
-const login_service_1 = require("./login.service");
-let LoginController = class LoginController {
+const passport_1 = require("@nestjs/passport");
+const passport_local_1 = require("passport-local");
+const login_service_1 = require("../login.service");
+let LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)(passport_local_1.Strategy) {
     constructor(loginService) {
+        super({ username: "email" });
         this.loginService = loginService;
     }
-    async login(data) {
-        common_1.Logger.log("Login controller");
-        return this.loginService.login(data.email);
+    async validate(email, senha) {
+        return await this.loginService.validateUser(email, senha);
     }
 };
-__decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_dto_1.LoginDto]),
-    __metadata("design:returntype", Promise)
-], LoginController.prototype, "login", null);
-LoginController = __decorate([
-    (0, common_1.Controller)('login'),
+LocalStrategy = __decorate([
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [login_service_1.LoginService])
-], LoginController);
-exports.LoginController = LoginController;
-//# sourceMappingURL=login.controller.js.map
+], LocalStrategy);
+exports.LocalStrategy = LocalStrategy;
+//# sourceMappingURL=local.strategy.js.map
