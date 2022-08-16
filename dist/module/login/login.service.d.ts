@@ -6,7 +6,7 @@ export declare class LoginService {
     private jwtService;
     constructor(prisma: PrismaService, jwtService: JwtService);
     validateUser(email: string, pass: string): Promise<UsuarioDTO>;
-    login(email: string): Promise<{
+    login(email: string, senha: string): Promise<{
         token: string;
     }>;
 }

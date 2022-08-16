@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const PrismaService_1 = require("../../database/PrismaService");
 const bcrypt_1 = require("bcrypt");
 const jwt_1 = require("@nestjs/jwt");
+const codeDecoderpassword_1 = require("../../helpers/codeDecoderpassword");
 let LoginService = class LoginService {
     constructor(prisma, jwtService) {
         this.prisma = prisma;
@@ -36,7 +37,8 @@ let LoginService = class LoginService {
             return null;
         return user;
     }
-    async login(email) {
+    async login(email, senha) {
+        const codecode = new codeDecoderpassword_1.CodeDecode();
         const usuario = await this.prisma.usuario.findUnique({
             where: {
                 email: email
@@ -44,10 +46,14 @@ let LoginService = class LoginService {
         });
         if (!usuario)
             throw new common_1.HttpException("Not found", common_1.HttpStatus.NOT_FOUND);
-        const payload = { sub: usuario.id, email: usuario.email };
-        return {
-            token: this.jwtService.sign(payload),
-        };
+        const verify = await codecode.decode(senha, usuario.senha);
+        if (verify) {
+            const payload = { sub: usuario.id, email: usuario.email };
+            return {
+                token: this.jwtService.sign(payload),
+            };
+        }
+        throw new common_1.HttpException("login ou senha invalido", common_1.HttpStatus.BAD_REQUEST);
     }
 };
 LoginService = __decorate([

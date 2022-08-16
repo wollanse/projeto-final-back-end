@@ -11,7 +11,7 @@ export class LoginController {
   @Post()
   async login(@Body() data: LoginDto){
     Logger.log("Login controller")
-    return this.loginService.login(data.email)
+    return this.loginService.login(data.email , data.senha)
   }
   
 }

@@ -22,7 +22,7 @@ let LoginController = class LoginController {
     }
     async login(data) {
         common_1.Logger.log("Login controller");
-        return this.loginService.login(data.email);
+        return this.loginService.login(data.email, data.senha);
     }
 };
 __decorate([

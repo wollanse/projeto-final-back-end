@@ -3,6 +3,7 @@ import { PrismaService } from 'src/database/PrismaService';
 import { UsuarioDTO } from '../usuario/Usuario.dto';
 import { compareSync } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { CodeDecode } from 'src/helpers/codeDecoderpassword';
 
 
 @Injectable()
@@ -27,20 +28,26 @@ export class LoginService {
     return user;
 }
   
-async login(email: string) {
+async login(email: string , senha: string) {
+  const codecode = new CodeDecode()
   const usuario = await this.prisma.usuario.findUnique({
     where: {
       email: email
     }
   })
-
+  
   if(!usuario) throw new HttpException("Not found", HttpStatus.NOT_FOUND)
+  const verify = await codecode.decode(senha,usuario.senha)
+  if(verify){
+    
+    const payload = { sub: usuario.id, email: usuario.email };
 
-  const payload = { sub: usuario.id, email: usuario.email };
-
-  return {
-    token: this.jwtService.sign(payload),
-  };
+    return {
+      token: this.jwtService.sign(payload),
+    };
+    
+  }
+  throw new HttpException("login ou senha invalido",HttpStatus.BAD_REQUEST)
 }
 }
 
